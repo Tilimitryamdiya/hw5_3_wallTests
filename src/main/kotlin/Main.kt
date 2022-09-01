@@ -25,7 +25,8 @@ data class Post(
     val markedAsAds: Boolean = false,
     val isFavorite: Boolean = false,
     val donut: Donut?,
-    val postponedId: Int = 0
+    val postponedId: Int = 0,
+    val attachment: Array<Attachment> = emptyArray()
 )
 
 data class Comments(
@@ -58,7 +59,10 @@ class Likes(
         }
 }
 
-class Reposts(val count: Int = 0, val user_reposted: Boolean = false)
+class Reposts(
+    val count: Int = 0,
+    val user_reposted: Boolean = false
+)
 
 class Views(val count: Int = 0)
 
@@ -98,6 +102,126 @@ class Donut(
     val edit_mode: String
 )
 
+data class Photo(
+    val id: Int = 0,
+    val albumId: Int = 0,
+    val ownerId: Int = 0,
+    val userId: Int = 0,
+    val text: String = "default",
+    val date: Int = 0,
+    val sizes: Array<Sizes> = emptyArray(),
+    val width: Int = 0,
+    val height: Int = 0
+)
+
+data class Sizes(
+    val type: String = "default",
+    val url: String = "url",
+    val width: Int = 0,
+    val height: Int = 0
+)
+
+data class Audio(
+    val id: Int,
+    val ownerId: Int = 0,
+    val artist: String = "default",
+    val title: String = "default",
+    val duration: Int = 0,
+    val url: String = "default",
+    val lyricsId: Int = 0,
+    val albumId: Int = 0,
+    val genreId: Int = 0,
+    val date: Int = 0,
+    val noSearch: Boolean = false,
+    val isHq: Boolean = false
+)
+
+data class Video(
+    val id: Int = 0,
+    val ownerId: Int = 0,
+    val title: String,
+    val description: String = "default",
+    val duration: Int = 0,
+    val image: Array<Image> = emptyArray(),
+    val firstFrame: Array<Firstframe>,
+    val date: Int = 0,
+    val addingDate: Int = 0,
+    val views: Int = 0,
+    val localViews: Int = 0,
+    val comments: Int = 0,
+    val player: String = "default",
+    val platform: String = "default",
+    val canAdd: Boolean = false,
+    val isPrivate: Boolean = false,
+    val accessKey: String = "default",
+    val processing: Int = 0,
+    val isFavorite: Boolean = false,
+    val canComment: Boolean = false,
+    val canEdit: Boolean = false,
+    val canLike: Boolean = false,
+    val canRepost: Boolean = false,
+    val canSubscribe: Boolean = false
+)
+
+data class Image(
+    val height: Int = 0,
+    val url: String = "default",
+    val width: Int = 0,
+    val withPadding: Boolean = false
+)
+
+data class Firstframe(
+    val height: Int = 0,
+    val url: String = "default",
+    val width: Int = 0
+)
+
+data class Link(
+    val url: String,
+    val title: String = "default",
+    val caption: String = "default",
+    val description: String = "default",
+    val photo: Photo = Photo(),
+    val product: Product = Product(),
+    val previewPage: String = "default",
+    val previewUrl: String = "default"
+)
+
+data class Product(
+    val price: Int = 0
+)
+
+data class Gift(
+    val id: Int = 0,
+    val thumb256: String = "default",
+    val thumb96: String = "default",
+    val thumb48: String = "default",
+)
+
+interface Attachment {
+    val type: String
+}
+
+data class PhotoAttachment(val photo: Photo) : Attachment {
+    override val type: String = "photo"
+}
+
+data class AudioAttachment(val audio: Audio) : Attachment {
+    override val type: String = "audio"
+}
+
+data class VideoAttachment(val audio: Video) : Attachment {
+    override val type: String = "video"
+}
+
+data class LinkAttachment(val link: Link) : Attachment {
+    override val type: String = "link"
+}
+
+data class GiftAttachment(val gift: Gift) : Attachment {
+    override val type: String = "gift"
+}
+
 object WallService {
     private var posts = emptyArray<Post>()
     private var postId = 1
@@ -109,35 +233,36 @@ object WallService {
         return posts.last()
     }
 
-    fun update(post: Post): Boolean {
-        val (id) = post
+    fun update(newPost: Post): Boolean {
+        val (id) = newPost
         for ((index, post) in posts.withIndex()) {
             if (post.id == id) {
                 posts[index] = post.copy(
-                    fromId = post.fromId,
-                    createdBy = post.createdBy,
-                    text = post.text,
-                    replyOwnerId = post.replyOwnerId,
-                    replyPostId = post.replyPostId,
-                    friendsOnly = post.friendsOnly,
-                    comments = post.comments,
-                    copyright = post.copyright,
-                    likes = post.likes,
-                    reposts = post.reposts,
-                    views = post.views,
-                    postType = post.postType,
-                    postSource = post.postSource,
-                    geo = post.geo,
-                    signerId = post.signerId,
-                    copyHistory = post.copyHistory,
-                    canPin = post.canPin,
-                    canDelete = post.canDelete,
-                    canEdit = post.canEdit,
-                    isPinned = post.isPinned,
-                    markedAsAds = post.markedAsAds,
-                    isFavorite = post.isFavorite,
-                    donut = post.donut,
-                    postponedId = post.postponedId
+                    fromId = newPost.fromId,
+                    createdBy = newPost.createdBy,
+                    text = newPost.text,
+                    replyOwnerId = newPost.replyOwnerId,
+                    replyPostId = newPost.replyPostId,
+                    friendsOnly = newPost.friendsOnly,
+                    comments = newPost.comments,
+                    copyright = newPost.copyright,
+                    likes = newPost.likes,
+                    reposts = newPost.reposts,
+                    views = newPost.views,
+                    postType = newPost.postType,
+                    postSource = newPost.postSource,
+                    geo = newPost.geo,
+                    signerId = newPost.signerId,
+                    copyHistory = newPost.copyHistory,
+                    canPin = newPost.canPin,
+                    canDelete = newPost.canDelete,
+                    canEdit = newPost.canEdit,
+                    isPinned = newPost.isPinned,
+                    markedAsAds = newPost.markedAsAds,
+                    isFavorite = newPost.isFavorite,
+                    donut = newPost.donut,
+                    postponedId = newPost.postponedId,
+                    attachment = newPost.attachment
                 )
                 return true
             }
@@ -145,6 +270,12 @@ object WallService {
         return false
     }
 
+    fun print(){
+        for (post in posts){
+            println(post)
+        }
+        println()
+    }
 }
 
 fun main() {
@@ -180,9 +311,16 @@ fun main() {
         copyright = null,
         postSource = PostSource("vk", "android", "profilePhoto", "url"),
         geo = null,
-        donut = null
+        donut = null,
+        attachment = arrayOf(
+            PhotoAttachment(Photo(0, width = 1, height = 2)),
+            AudioAttachment(Audio(1, title = "song")),
+            GiftAttachment(Gift(3, "gift"))
+        )
     )
 
+    WallService.update(newPost2)
 
-    println(WallService.update(newPost2))
+    WallService.print()
+
 }
