@@ -6,9 +6,16 @@ class WallServiceTest {
 
     @Test
     fun add() {
-        val testPost = Post(text = "test", date = 101010)
-        val service = WallService
-        service.add(testPost)
+        val testPost = Post(
+            text = "test",
+            date = 101010,
+            copyright = null,
+            postSource = null,
+            geo = null,
+            donut = null
+        )
+
+        WallService.add(testPost)
         val result = testPost.id
         assertNotEquals(0, result)
     }
@@ -17,16 +24,26 @@ class WallServiceTest {
     fun updateIdIsFound() {
         val post = Post(
             text = "test",
-            date = 101010
+            date = 101010,
+            copyright = null,
+            postSource = null,
+            geo = null,
+            donut = null
         )
-        val service = WallService
-        service.add(post)
+
+        WallService.add(post)
+
         val post1 = Post(
             id = post.id,
             text = "test",
-            date = 111010
+            date = 111010,
+            copyright = null,
+            postSource = null,
+            geo = null,
+            donut = null
         )
-        val result = service.update(post1)
+
+        val result = WallService.update(post1)
         assertEquals(true, result)
     }
 
@@ -34,16 +51,27 @@ class WallServiceTest {
     fun updateIdNotFound() {
         val post = Post(
             text = "test",
-            date = 101010
+            date = 101010,
+            copyright = null,
+            postSource = null,
+            geo = null,
+            donut = null
         )
-        val service = WallService
-        service.add(post)
+
+
+        WallService.add(post)
+
         val post1 = Post(
             id = 0,
             text = "test",
-            date = 111010
+            date = 111010,
+            copyright = null,
+            postSource = null,
+            geo = null,
+            donut = null
         )
-        val result = service.update(post1)
+
+        val result = WallService.update(post1)
         assertEquals(false, result)
     }
 }
